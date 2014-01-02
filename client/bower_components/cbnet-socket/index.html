@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CBNetSocket example</title>
+  <script src="../platform/platform.js"></script>
+  <link rel="import" href="cbnet-socket.html">
+</head>
+<body>
+
+  <polymer-element name="cbnet-socket-test">
+    <template>
+      <cbnet-socket id="socket" 
+                    messages="{{messages}}"
+                    on-cbnet-socket-message="{{onMessage}}"></cbnet-socket>
+      <button on-click="{{onSendClick}}">Send sample message</button>
+
+      <template repeat="{{message in messages}}">
+        <div>{{message.content}}</div>
+      </template>
+
+    </template>
+    <script>
+      Polymer('cbnet-socket-test', {
+        onMessage: function (event, message, sender) {
+          console.log('Got message:', message.content);
+        },
+        onSendClick: function (event, detail, sender) {
+          this.$.socket.send("Sample message");
+        }
+      });
+    </script>
+  </polymer-element>
+  
+  <h1>CBNetSocket example</h1>
+
+  
+
+  <cbnet-socket-test></cbnet-socket-test>
+
+</body>
+</html>

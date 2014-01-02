@@ -1,0 +1,29 @@
+<link rel="import" href="../polymer/polymer.html">
+<script src="/socket.io/socket.io.js"></script>
+
+<polymer-element name="cbnet-socket" 
+                 constructor="CBNetSocket" 
+                 attributes="messages url user">
+  <script>
+  
+  Polymer('cbnet-socket', {
+    ready: function () {
+      this.user = this.user || 'Guest';
+      this.url = this.url || 'http://localhost';
+      this.messages = [];
+      this.onSocketMessage = this.onSocketMessage.bind(this);
+
+      this.socket = io.connect(this.url);
+      this.socket.on('message', this.onSocketMessage);
+    },
+    onSocketMessage: function (data) {
+      this.messages.push(data);
+      this.fire('cbnet-socket-message', data);
+    },
+    send: function (msg) {
+      this.socket.emit('message', {content: msg, user: this.user});
+    }
+  });
+
+  </script>  
+</polymer-element>

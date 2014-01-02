@@ -1,1 +1,2 @@
-var app = require('./app');
+require('typescript-require');
+require('./app');
