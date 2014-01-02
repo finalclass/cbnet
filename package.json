@@ -1,0 +1,16 @@
+{
+  "name": "cbnet",
+  "version": "0.0.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "jasmine-node spec/"
+  },
+  "repository": "",
+  "author": "Szymon Wygnański <s@finalclass.net>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "~3.4.7",
+    "typescript-require": "~0.2.4"
+  }
+}
