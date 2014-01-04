@@ -1,0 +1,44 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<polymer-element name="cbnet-coords" 
+                 constructor="CBNetCoords" 
+                 attributes="latitude longitude">
+
+<script>
+  Polymer('cbnet-coords', {
+    ready: function () {
+      this.latitude = 0;
+      this.longitude = 0;
+      this.onGeoSuccess = this.onGeoSuccess.bind(this);
+      this.onGeoError = this.onGeoError.bind(this);
+      this.delayedGetPosition(0);
+    },
+    // ---------------------------
+    // private API
+    // ---------------------------
+    delayedGetPosition: function (delay) {
+      delay = delay || 0;
+      var that = this;
+      setTimeout(function () {
+        navigator.geolocation.getCurrentPosition(that.onGeoSuccess, that.onGeoError, { 
+            maximumAge: 3000, 
+            timeout: 5000, 
+            enableHighAccuracy: true 
+          });
+      }, delay);
+    },
+    // ---------------------------
+    // Event Handlers
+    // ---------------------------
+    onGeoSuccess: function (geoPos) {
+      this.latitude = geoPos.coords.latitude;
+      this.longitude = geoPos.coords.longitude;
+      this.delayedGetPosition(5000);
+    },
+    onGeoError: function (error) {
+      console.log('ERROR', error);
+    },
+  });
+</script>
+
+</polymer-element>

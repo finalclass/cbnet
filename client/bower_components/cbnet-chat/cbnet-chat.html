@@ -1,0 +1,109 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../cbnet-socket/cbnet-socket.html">
+<link rel="import" href="../cbnet-coords/cbnet-coords.html">
+<link rel="stylesheet" href="../pure/pure.css">
+
+<polymer-element name="cbnet-chat" 
+                 constructor="CBNetChat" 
+                 attributes="">
+
+<script>
+  Polymer('cbnet-chat', {
+    ready: function () {
+      this.messages = [];
+      this.userName = 'Guest';
+      this.messageContent = '';
+      this.latitude = 6;
+      this.longitude = 6;
+    },
+    onNewMessageFormSubmit: function (event, detail, sender) {
+      event.preventDefault();
+      this.$.socket.send(this.messageContent);
+    },
+    onNewMessage: function () {
+      console.log(this.messages);
+    },
+    onGetRealClick: function () {
+      this.latitude = this.realLatitude;
+      this.longitude = this.realLongitude;
+    }
+  });
+</script>  
+
+<style>
+  .message-form {
+    width: 100%;
+  }
+  .container {
+    width: 100%;
+  }
+  .pure-button-small {
+    font-size: 90%;
+  }
+</style>
+
+<template>
+  <cbnet-coords id="coords"
+                latitude="{{realLatitude}}"
+                longitude="{{realLongitude}}"></cbnet-coords>
+
+  <cbnet-socket id="socket" 
+                messages="{{messages}}"
+                user="{{userName}}"
+                latitude="{{latitude}}"
+                longitude="{{longitude}}"
+                on-cbnet-socket-message="{{onNewMessage}}"></cbnet-socket>
+
+  <div class="container">
+
+    <div class="">
+      <template repeat="{{message in messages}}">
+        <div class="pure-g">
+          <div class="pure-u-1-5">{{message.user}}</div>
+          <div class="pure-u-4-5">{{message.content}}</div>
+        </div>
+      </template>
+    </div>
+
+    <form class="pure-form message-form pure-g" 
+          on-submit="{{onNewMessageFormSubmit}}">
+
+      <div class="pure-u-1-5">
+        <input type="text" 
+               class="pure-input-1"
+               value="{{userName}}" 
+               placeholder="Name">
+      </div>
+      <div class="pure-u-3-5">
+        <input type="text" 
+               class="pure-input-1"
+               value="{{messageContent}}" 
+               placeholder="type a new message here...">
+      </div>
+      <div class="pure-u-1-5">
+        <button class="pure-input-1 pure-button pure-button-small">Send</button>
+      </div>
+
+    </form>
+
+    <div class="pure-form pure-form-aligned">
+      <fieldset>
+        <div class="pure-control-group">
+          <label>Latitude</label>
+          <input type="text" value="{{latitude}}">
+        </div>
+        <div class="pure-control-group">
+          <label>Longitude</label>
+          <input type="text" value="{{longitude}}">
+        </div>
+        <div class="pure-controls">
+          <button class="pure-button" 
+                  on-click="{{onGetRealClick}}">get real</button>
+        </div>
+      </fieldset>
+    </div>
+
+  </div>
+</template>
+
+</polymer-element>

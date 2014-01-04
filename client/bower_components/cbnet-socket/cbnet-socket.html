@@ -3,27 +3,63 @@
 
 <polymer-element name="cbnet-socket" 
                  constructor="CBNetSocket" 
-                 attributes="messages url user">
+                 attributes="messages url user latitude longitude">
   <script>
   
   Polymer('cbnet-socket', {
     ready: function () {
+      this.onSocketMessage = this.onSocketMessage.bind(this);
+
       this.user = this.user || 'Guest';
       this.url = this.url || 'http://localhost';
       this.messages = [];
-      this.onSocketMessage = this.onSocketMessage.bind(this);
-
+      
       this.socket = io.connect(this.url);
       this.socket.on('message', this.onSocketMessage);
     },
+    // ---------------------------
+    // public API
+    // ---------------------------
+    send: function (msg) {
+      this.socket.emit('message', {content: msg, user: this.user});
+    },
+    
+    delayedSaveCoords: function (delay) {
+      delay = delay || 0;
+      var that = this;
+      if (that.savePosTimer) {
+        clearTimeout(that.savePosTimer);
+      }
+      that.savePosTimer = setTimeout(function () {
+        that.socket.emit('coords', {longitude: that.longitude, latitude: that.latitude});
+      }, delay)
+    },
+    // ---------------------------
+    // latitude
+    // ---------------------------
+    latitude: 0,
+    latitudeChanged: function () {
+      if (this.socket) {
+        this.delayedSaveCoords(100);
+      }
+    },
+    // ---------------------------
+    // longitude
+    // ---------------------------
+    longitude: 0,
+    longitudeChanged: function () {
+      if (this.socket) {
+        this.delayedSaveCoords(100);
+      }
+    },
+    // ---------------------------
+    // Event Handlers
+    // ---------------------------
     onSocketMessage: function (data) {
       this.messages.push(data);
       this.fire('cbnet-socket-message', data);
-    },
-    send: function (msg) {
-      this.socket.emit('message', {content: msg, user: this.user});
     }
   });
 
-  </script>  
+  </script>
 </polymer-element>
